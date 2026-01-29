@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace JeuxZombie
+﻿namespace JeuxZombie
 {
     public class HealthManager
     {
@@ -12,8 +10,8 @@ namespace JeuxZombie
                 return false;
             }
 
-            // Récupérer la potion
-            Potion potion;
+            // Récupérer la potion à refaire incoherence au niveaux de la création fonction
+            Potion? potion;
             if (potionType.HasValue)
             {
                 potion = player.Inventory.GetPotion(potionType.Value);
@@ -25,7 +23,14 @@ namespace JeuxZombie
             }
             else
             {
+                // utilisation des potions dans l'ordre (sois petite -> moyenne -> grande)
                 potion = player.Inventory.GetAnyPotion();
+                if (potion == null)
+                {
+                    Console.WriteLine("❌ Aucune potion trouvée !");
+                    return false;
+                }
+                player.Inventory.RemovePotion(potion); // en création d'une fonction pour retirer une potion spécifique
             }
 
             return ApplyPotion(player, potion);

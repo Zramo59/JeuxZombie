@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace JeuxZombie
+﻿namespace JeuxZombie
 {
     public enum PlayerType { Tank, Chevalier, Mage }
 
@@ -10,8 +7,8 @@ namespace JeuxZombie
         public string Name { get; set; }
         public PlayerType Type { get; set; }
         public int Health { get; set; }
-        public Weapon CurrentWeapon { get; set; }
-        public string Description { get; set; }
+        public Weapon CurrentWeapon { get; set; } = new Weapon("Default Weapon", 0, 0);
+        public string Description { get; set; } = string.Empty;
         public Inventory Inventory { get; set; }
 
         public Player(string name, PlayerType type)
@@ -21,9 +18,9 @@ namespace JeuxZombie
             Inventory = new Inventory(5); // Initialize inventory before adding potions
 
             // Ajouter quelques potions de départ
-            Inventory.AddPotion(new Potion(PotionType.Petite));
-            Inventory.AddPotion(new Potion(PotionType.Petite));
-            Inventory.AddPotion(new Potion(PotionType.Moyenne));
+            Inventory.AddPotion(InitialisePotion(PotionType.Small));
+            Inventory.AddPotion(InitialisePotion(PotionType.Medium));
+            Inventory.AddPotion(InitialisePotion(PotionType.Large));
         }
 
         private void InitialisePlayer(PlayerType type)
@@ -47,6 +44,13 @@ namespace JeuxZombie
                     Description = "Un utilisateur de magie puissant, capable d'infliger des dégâts à distance avec des sorts.";
                     break;
             }
+        }
+
+        private Potion InitialisePotion(PotionType type)
+        {
+            var potion = new Potion();
+            potion.InitialisePotion(type);
+            return potion;
         }
     }
 }

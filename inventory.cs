@@ -1,81 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace JeuxZombie
+﻿namespace JeuxZombie
 {
-    public enum PotionType { Petite, Moyenne, Grande }
-
-    public partial class Potion
+    public enum PotionType
     {
-        public string Name { get; set; }
-        public int HealAmount { get; set; }
-        public PotionType Type { get; set; }
+        Small,
+        Medium,
+        Large
+    }
 
-        public Potion(PotionType type)
+    public class Potion
+    {
+        public PotionType Type { get; }
+        public string Name { get; set; } = string.Empty;
+        public int HealAmount { get; set; }
+
+        public void InitialisePotion(PotionType type)
         {
-            Type = type;
-            Name = string.Empty; // Initialize Name
+            switch (type)
+            {
+                case PotionType.Small:
+                    Name = "Potion Petite";
+                    HealAmount = 20;
+                    break;
+                case PotionType.Medium:
+                    Name = "Potion Moyenne";
+                    HealAmount = 50;
+                    break;
+                case PotionType.Large:
+                    Name = "Potion Grande";
+                    HealAmount = 100;
+                    break;
+            }
         }
     }
 
-    public partial class Inventory
+    public class Inventory
     {
         private List<Potion> _potions;
         private int _maxCapacity;
 
-        public Inventory(int maxCapacity = 5)
+        public Inventory(int maxCapacity)
         {
-            _maxCapacity = maxCapacity;
             _potions = new List<Potion>();
+            _maxCapacity = maxCapacity;
         }
-
-        public int Count => _potions.Count;
-        public bool IsFull => _potions.Count >= _maxCapacity;
-        public bool IsEmpty => _potions.Count == 0;
 
         public bool AddPotion(Potion potion)
         {
-            if (IsFull)
+            if (_potions.Count >= _maxCapacity)
             {
-                Console.WriteLine("❌ Inventaire plein ! Impossible d'ajouter une potion.");
+                Console.WriteLine("Inventaire plein !");
                 return false;
             }
 
             _potions.Add(potion);
-            Console.WriteLine($"✓ {potion.Name} ajoutée à l'inventaire. ({Count}/{_maxCapacity})");
             return true;
-        }
-
-        public Potion GetPotion(PotionType type)
-        {
-            var potion = _potions.FirstOrDefault(p => p.Type == type);
-            if (potion != null)
-            {
-                _potions.Remove(potion);
-            }
-            return potion;
-        }
-
-        public Potion GetAnyPotion()
-        {
-            if (IsEmpty) return null;
-            
-            var potion = _potions[0];
-            _potions.RemoveAt(0);
-            return potion;
         }
 
         public void DisplayInventory()
         {
-            Console.WriteLine($"\n=== INVENTAIRE ({Count}/{_maxCapacity}) ===");
-            if (IsEmpty)
-            {
-                Console.WriteLine("  Vide");
-                return;
-            }
+            Console.WriteLine($"\n=== INVENTAIRE ({_potions.Count}/{_maxCapacity}) ===");
 
-            var grouped = _potions.GroupBy<Potion, PotionType>(p => p.Type).OrderBy(g => g.Key);
+            var grouped = _potions.GroupBy(p => p.Type).OrderBy(g => g.Key);
+
             int index = 1;
             foreach (var group in grouped)
             {
@@ -83,20 +69,35 @@ namespace JeuxZombie
                 index++;
             }
         }
-
-        public List<Potion> GetAllPotions()
+        
+        public bool RemovePotion(Potion potion)
         {
-            return new List<Potion>(_potions);
+            return _potions.Remove(potion);
+        }
+        
+        public bool AddToInventory(Potion potion)
+        {
+            if (_potions.Count >= _maxCapacity)
+            {
+                return false;
+            }
+
+            _potions.Add(potion);
+            return true;
+        }
+        
+        public bool IsFull => _potions.Count >= _maxCapacity;
+
+        public bool IsEmpty => !_potions.Any();
+
+        public Potion? GetPotion(PotionType type)
+        {
+            return _potions.FirstOrDefault(p => p.Type == type);
         }
 
-        public bool HasPotion(PotionType type)
+        public Potion? GetAnyPotion()
         {
-            return _potions.Any(p => p.Type == type);
-        }
-
-        public bool HasAnyPotion()
-        {
-            return !IsEmpty;
+            return _potions.FirstOrDefault();
         }
     }
 }
