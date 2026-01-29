@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Threading;
 
-public class CombatEngine
+namespace JeuxZombie
 {
-    private static Random _rng = new Random();
-    private int encounter = _rng.Next(0, 3);
-    
-    public void StartFight(Player player, Zombie zomb)
+    public class CombatEngine
     {
-        Console.WriteLine($"--- DÉBUT DU COMBAT : {player.Name} VS {zomb.Name} ---");
+        private static Random _rng = new Random();
+        
+        public void StartFight(Player player, Zombie zomb)
+        {
+            Console.WriteLine($"--- DÉBUT DU COMBAT : {player.Name} VS {zomb.Name} ---");
         
         // Afficher l'inventaire de départ
         player.Inventory.DisplayInventory();
@@ -34,15 +36,15 @@ public class CombatEngine
                 switch (actionKey.KeyChar)
                 {
                     case '1':
-                        // Attaque
                         if (player.CurrentWeapon.Durability <= 0)
                         {
-                            Console.WriteLine("❌ Votre arme est brisée ! Vous attaquez faiblement à mains nues.");
+                            Console.WriteLine("❌ Votre arme est brisée !");
                             zomb.Health -= 2;
                         }
-                        else if (player.CurrentWeapon.Ammo <= 0)
+                        // On ne vérifie les munitions QUE pour le Mage (ou si l'arme en a de base)
+                        else if (player.Type == PlayerType.Mage && player.CurrentWeapon.Ammo <= 0)
                         {
-                            Console.WriteLine("⚠️ Plus de munitions !");
+                            Console.WriteLine("⚠️ Plus de mana / munitions !");
                             zomb.Health -= 5;
                         }
                         else
@@ -50,7 +52,7 @@ public class CombatEngine
                             int dmgDealt = player.CurrentWeapon.Damage;
                             zomb.Health -= dmgDealt;
                             player.CurrentWeapon.Use();
-                            Console.WriteLine($"[JOUEUR] Vous infligez {dmgDealt} dégâts. (Vie Zombie: {Math.Max(0, zomb.Health)})");
+                            Console.WriteLine($"[JOUEUR] Vous infligez {dmgDealt} dégâts.");
                         }
                         break;
 
@@ -87,7 +89,7 @@ public class CombatEngine
             }
 
             playerTurn = !playerTurn;
-            System.Threading.Thread.Sleep(800);
+            Thread.Sleep(800);
         }
 
         // Résultat
@@ -95,7 +97,7 @@ public class CombatEngine
         if (player.Health > 0)
         {
             Console.WriteLine($"✅ VICTOIRE ! Vous avez terrassé le {zomb.Name}.");
-            Console.WriteLine($"💚 Vie restante : {player.Health} PV");
+            Console.WriteLine($"💚 Vie restante : {player.Health.ToString()} PV");
             
             // Récompense : potion aléatoire
             if (!player.Inventory.IsFull)
@@ -110,4 +112,5 @@ public class CombatEngine
             Console.WriteLine("💀 Game Over... Vous avez été dévoré.");
         }
     }
+}
 }

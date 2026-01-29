@@ -12,7 +12,7 @@ public class Zombie
     public Zombie()
     {
         // Génère un type de zombie aléatoire
-        Type = (ZombieType)_random.Next(0, Enum.GetValues(Type of (ZombieType)) lenght + 1);
+        Type = (ZombieType)_random.Next(0, Enum.GetValues(typeof(ZombieType)).Length+1);
         InitializeStats(Type);
     }
     

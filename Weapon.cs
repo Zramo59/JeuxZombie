@@ -17,8 +17,8 @@
 
     public void Use()
     {
-        Durability -= 5; // L'arme s'use
-        Ammo--;
+        Durability -= 5;
+        if (Ammo > 0) Ammo--; // On ne baisse les munitions que s'il y en a
         XP += 10;
         if (XP >= 100) LevelUp();
     }
