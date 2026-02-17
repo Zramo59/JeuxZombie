@@ -9,7 +9,7 @@
 
     public class Potion
     {
-        public PotionType Type { get; }
+        public PotionType Type { get; set; } // Ajout d'un setter pour permettre l'assignation
         public string Name { get; set; } = string.Empty;
         public int HealAmount { get; set; }
 
@@ -56,7 +56,7 @@
             return true;
         }
 
-        public void DisplayInventory()
+        public void DisplayInventory(Player player)
         {
             Console.WriteLine($"\n=== INVENTAIRE ({_potions.Count}/{_maxCapacity}) ===");
 
@@ -68,6 +68,9 @@
                 Console.WriteLine($"  {index}. {group.First().Name} (+{group.First().HealAmount} PV) x{group.Count()}");
                 index++;
             }
+
+            HealthManager.DisplayHealthBar(player);
+            // Xp.DisplayXp();
         }
         
         public bool RemovePotion(Potion potion)

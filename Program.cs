@@ -2,37 +2,31 @@
 {
     class Program
     {
-        static void Main()
+        private static void Main()
         {
-            // Saisie du nom
-            Console.WriteLine("Entrez votre nom :");
-            string playerName = Console.ReadLine() ?? "Joueur";
-
-            // Menu de sélection du type de joueur
-            Console.WriteLine("\n=== CHOISIR VOTRE CLASSE ===");
-            Console.WriteLine("1 - Tank (200 PV, Hache de guerre)");
-            Console.WriteLine("2 - Chevalier (120 PV, Épée longue)");
-            Console.WriteLine("3 - Mage (75 PV, Bâton magique)");
-            Console.WriteLine("Appuyez sur une touche (1-3):");
-
+            Console.WriteLine("Welcome to my terminal game !");
+            Console.WriteLine("At first, you have to choose your character :");
+            string playerName = Console.ReadLine() ?? "Player";
+            Console.WriteLine($"Good {playerName}, you have many class in my world, you can choose between :");
+            Console.WriteLine("1 - Tank (200 HP, War Axe)");
+            Console.WriteLine("2 - Knight (120 HP, Long Sword)");
+            Console.WriteLine("3 - Mage (75 HP, Magic Staff)");
+            Console.WriteLine("Just press a key (1-3) to choose your class :");
             ConsoleKeyInfo playerKey = Console.ReadKey(true);
             Player hero;
-            
-
-            switch (playerKey.KeyChar)
-            {
+            switch (playerKey.KeyChar)            {
                 case '1':
                     hero = new Player(playerName, PlayerType.Tank);
                     break;
                 case '2':
-                    hero = new Player(playerName, PlayerType.Chevalier);
+                    hero = new Player(playerName, PlayerType.Knight);
                     break;
                 case '3':
                     hero = new Player(playerName, PlayerType.Mage);
                     break;
                 default:
-                    Console.WriteLine("Touche invalide, classe Chevalier par défaut...");
-                    hero = new Player(playerName, PlayerType.Chevalier);
+                    Console.WriteLine("Invalid key, Knight class by default...");
+                    hero = new Player(playerName, PlayerType.Knight);
                     break;
             }
 
@@ -61,7 +55,7 @@
                         break;
                     case '2':
                         Console.WriteLine("Accèder à l'inventaire...");
-                        hero.Inventory.DisplayInventory();
+                        hero.Inventory.DisplayInventory(hero);
                         break;
                     case '3':
                         Console.WriteLine("Quitter le jeu...");

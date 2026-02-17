@@ -1,11 +1,13 @@
-﻿public class Weapon
+﻿namespace JeuxZombie;
+
+public class Weapon
 {
     public string Model { get; set; }
     public int Damage { get; set; }
     public int Durability { get; set; } // En %
     public int Ammo { get; set; }
     public int Level { get; set; } = 1;
-    public int XP { get; set; } = 0;
+    public int Xp { get; set; } // Correction du nom et suppression de l'initialisation redondante
 
     public Weapon(string model, int damage, int ammo)
     {
@@ -19,14 +21,14 @@
     {
         Durability -= 5;
         if (Ammo > 0) Ammo--; // On ne baisse les munitions que s'il y en a
-        XP += 10;
-        if (XP >= 100) LevelUp();
+        Xp += 10;
+        if (Xp >= 100) LevelUp();
     }
 
     private void LevelUp()
     {
         Level++;
-        XP = 0;
+        Xp = 0;
         Damage += 5;
         Console.WriteLine($"✨ Votre {Model} passe au niveau {Level} ! Dégâts augmentés.");
     }

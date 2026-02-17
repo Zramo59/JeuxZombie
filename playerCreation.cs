@@ -1,6 +1,6 @@
 ﻿namespace JeuxZombie
 {
-    public enum PlayerType { Tank, Chevalier, Mage }
+    public enum PlayerType { Tank, Knight, Mage }
 
     public class Player
     {
@@ -33,7 +33,7 @@
                     CurrentWeapon = new Weapon("Hache de guerre", 15, 0);
                     Description = "Un guerrier robuste, spécialisé dans la défense et le combat rapproché.";
                     break;
-                case PlayerType.Chevalier:
+                case PlayerType.Knight:
                     Health = 120;
                     CurrentWeapon = new Weapon("Épée longue", 25, 0);
                     Description = "Un combattant équilibré, alliant force et agilité avec une épée polyvalente.";

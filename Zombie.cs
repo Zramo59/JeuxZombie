@@ -1,51 +1,67 @@
-﻿public enum ZombieType { Normal, Berserk, Radioactif, Cuirassé }
-
-public class Zombie
+﻿using System;
+namespace JeuxZombie
 {
-    private static Random _random = new Random();
-    
-    public string Name { get; set; }
-    public ZombieType Type { get; set; }
-    public int Health { get; set; }
-    public int Damage { get; set; }
-
-    public Zombie()
+    public enum ZombieType
     {
-        // Génère un type de zombie aléatoire
-        Type = (ZombieType)_random.Next(0, Enum.GetValues(typeof(ZombieType)).Length+1);
-        InitializeStats(Type);
-    }
-    
-    public Zombie(ZombieType type)
-    {
-        Type = type;
-        InitializeStats(type);
+        Normal,
+        Berserk,
+        Radioactif,
+        Cuirassé
     }
 
-    private void InitializeStats(ZombieType type)
+    public class Zombie
     {
-        switch (type)
+        private static Random _rng = new Random();
+
+        public string Name { get; set; }
+        public ZombieType Type { get; set; }
+        public int Health { get; set; }
+        public int Damage { get; set; }
+        public int XpGiven { get; set; } 
+
+        public Zombie()
         {
-            case ZombieType.Berserk:
-                Name = "Zombie Berserk";
-                Health = 80;
-                Damage = 25;
-                break;
-            case ZombieType.Radioactif:
-                Name = "Zombie Radioactif";
-                Health = 120;
-                Damage = 10;
-                break;
-            case ZombieType.Cuirassé:
-                Name = "Zombie Cuirassé";
-                Health = 200;
-                Damage = 15;
-                break;
-            default:
-                Name = "Zombie Commun";
-                Health = 100;
-                Damage = 12;
-                break;
+            // Génère un type de zombie aléatoire
+            Type = (ZombieType)_rng.Next(0, Enum.GetValues(typeof(ZombieType)).Length + 1);
+            InitializeStats(Type);
+        }
+
+        public Zombie(ZombieType type)
+        {
+            Type = type;
+            InitializeStats(type);
+        }
+
+        private void InitializeStats(ZombieType type)
+        {
+            
+            switch (type)
+            {
+                case ZombieType.Berserk:
+                    Name = "Zombie Berserk";
+                    Health = 80;
+                    Damage = 25;
+                    XpGiven = _rng.Next(15, 25); // XP aléatoire entre 15 et 25
+                    break;
+                case ZombieType.Radioactif:
+                    Name = "Zombie Radioactif";
+                    Health = 120;
+                    Damage = 10;
+                    XpGiven = _rng.Next(20, 30); // XP aléatoire entre 10 et 20
+                    break;
+                case ZombieType.Cuirassé:
+                    Name = "Zombie Cuirassé";
+                    Health = 200;
+                    Damage = 15;
+                    XpGiven = _rng.Next(25, 30); //  XP aléatoire entre 25 et 30
+                    break;
+                default:
+                    Name = "Zombie Commun";
+                    Health = 100;
+                    Damage = 12;
+                    XpGiven = _rng.Next(5, 15); // XP aléatoire entre 5 et 15
+                    break;
+            }
         }
     }
 }

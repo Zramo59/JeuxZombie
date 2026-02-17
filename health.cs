@@ -2,6 +2,7 @@
 {
     public class HealthManager
     {
+        public int HealthBonus = 0; // Correction du nom pour respecter les conventions
         public static bool UsePotion(Player player, PotionType? potionType = null)
         {
             if (player.Inventory.IsEmpty)
@@ -65,7 +66,7 @@
             return type switch
             {
                 PlayerType.Tank => 200,
-                PlayerType.Chevalier => 120,
+                PlayerType.Knight => 120,
                 PlayerType.Mage => 75,
                 _ => 100
             };

@@ -8,8 +8,8 @@
         {
             Console.WriteLine($"--- DÉBUT DU COMBAT : {player.Name} VS {zomb.Name} ---");
 
-            // Afficher l'inventaire de départ
-            player.Inventory.DisplayInventory();
+            // // Afficher l'inventaire de départ
+            // player.Inventory.DisplayInventory(player);
 
             // Déterminer qui commence (Initiative)
             bool playerTurn = _rng.Next(0, 2) == 0;
@@ -39,7 +39,7 @@
                                 Console.WriteLine("❌ Votre arme est brisée !");
                                 zomb.Health -= 2;
                             }
-                            // On ne vérifie les munitions QUE pour le Mage (ou si l'arme en a de base)
+                            // On ne vérifie les munitions QUE pour le Mage (ou si l'arme en a de base).
                             else if (player.Type == PlayerType.Mage && player.CurrentWeapon.Ammo <= 0)
                             {
                                 Console.WriteLine("⚠️ Plus de mana / munitions !");
@@ -69,7 +69,7 @@
 
                         case '3':
                             // Afficher l'inventaire
-                            player.Inventory.DisplayInventory();
+                            player.Inventory.DisplayInventory(player);
                             Console.WriteLine("⚠️ Vous ne consommez pas votre tour.");
                             playerTurn = true; // Le joueur rejoue
                             continue;
@@ -100,7 +100,7 @@
                     int dmgTaken = zomb.Damage;
                     player.Health -= dmgTaken;
                     Console.WriteLine($"\n[ZOMBIE] Le {zomb.Name} frappe ! Vous perdez {dmgTaken} PV.");
-                    HealthManager.DisplayHealthBar(player);
+                    // HealthManager.DisplayHealthBar(player);
                 }
 
                 playerTurn = !playerTurn;
@@ -113,15 +113,6 @@
             {
                 Console.WriteLine($"✅ VICTOIRE ! Vous avez terrassé le {zomb.Name}.");
                 Console.WriteLine($"💚 Vie restante : {player.Health.ToString()} PV");
-
-                // Récompense : potion aléatoire
-                // //fix reward (peut être faire une liste d'objets pour plusieurs types de récompenses)
-                // if (!player.Inventory.IsFull)
-                // {
-                //     PotionType rewardType = (PotionType)_rng.Next(0, 3);
-                //     player.Inventory.AddToInventory(rewardType);
-                //     Console.WriteLine("🎁 Vous avez trouvé une potion sur le zombie !");
-                // }
             }
             else
             {
