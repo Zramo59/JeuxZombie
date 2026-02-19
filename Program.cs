@@ -5,7 +5,7 @@
         private static void Main()
         {
             Console.WriteLine("Welcome to my terminal game !");
-            Console.WriteLine("At first, you have to choose your character :");
+            Console.WriteLine("At first, you have to choose your name character :");
             string playerName = Console.ReadLine() ?? "Player";
             Console.WriteLine($"Good {playerName}, you have many class in my world, you can choose between :");
             Console.WriteLine("1 - Tank (200 HP, War Axe)");
@@ -30,18 +30,18 @@
                     break;
             }
 
-            Console.WriteLine($"\n✓ Vous avez choisi : {hero.Type}");
+            Console.WriteLine($"\n✓ You choice : {hero.Type}");
             Console.WriteLine($"  {hero.Description}");
 
             bool boucle = true;
             CombatEngine engine = new CombatEngine();
             while (boucle)
             {
-                Console.WriteLine("\n=== MENU PRINCIPAL ===");
-                Console.WriteLine("1 - Commencer un combat");
-                Console.WriteLine("2 - Voir l'inventaire");
-                Console.WriteLine("3 - Quitter le jeu");
-                Console.WriteLine("Appuyez sur une touche (1-3):");
+                Console.WriteLine("\n=== MENU ===");
+                Console.WriteLine("1 - Start Fight");
+                Console.WriteLine("2 - Inventory");
+                Console.WriteLine("3 - Left Game");
+                Console.WriteLine("Push keychar (1-3):");
 
                 ConsoleKeyInfo startKey = Console.ReadKey(true);
 

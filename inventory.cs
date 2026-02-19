@@ -9,7 +9,7 @@
 
     public class Potion
     {
-        public PotionType Type { get; set; } // Ajout d'un setter pour permettre l'assignation
+        public PotionType Type { get; set; }
         public string Name { get; set; } = string.Empty;
         public int HealAmount { get; set; }
 
@@ -70,7 +70,16 @@
             }
 
             HealthManager.DisplayHealthBar(player);
-            // Xp.DisplayXp();
+            player.Xp.DisplayXp();
+            // ConsoleKeyInfo actionKey = Console.ReadKey(true);
+            // switch (actionKey.KeyChar)           {
+            //     case "1":
+            //         HealthManager.UsePotion(player);
+            //         continue;
+            //     case '2':
+            //         Console.WriteLine("Retour au menu...");
+            //         break;
+            // }
         }
         
         public bool RemovePotion(Potion potion)

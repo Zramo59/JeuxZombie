@@ -2,7 +2,7 @@
 
 public class Xp
 {
-        public int Level { get; private set; }
+        public int Level { get; private set; } = 1;
         public int CurrentXp { get; private set; }
         public int XpToNextLevel { get; private set; }
         
@@ -30,8 +30,19 @@ public class Xp
             return 100 + (Level - 1) * 50; // Exemple de formule d'XP croissante
         }
         
-        // public static void DisplayXp()
-        // {
-        //     Console.WriteLine($"Niveau: {Level} | XP: {CurrentXp}/{XpToNextLevel}");
-        // }
+        public void DisplayXp()
+        {
+            if (XpToNextLevel == 0) XpToNextLevel = CalculateXpForNextLevel();
+
+            double xpPercent = XpToNextLevel > 0 ? (double)CurrentXp / XpToNextLevel : 0;
+            int barLength = 20;
+            int filledBars = (int)(xpPercent * barLength);
+
+            string bar = "[" + new string('█', filledBars) + new string('░', Math.Max(0, barLength - filledBars)) + "]";
+
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"{bar} {CurrentXp}/{XpToNextLevel} XP (Niveau: {Level})");
+            Console.ResetColor();
+            Console.WriteLine();
+        }
 }

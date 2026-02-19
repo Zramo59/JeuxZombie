@@ -10,6 +10,7 @@
         public Weapon CurrentWeapon { get; set; } = new Weapon("Default Weapon", 0, 0);
         public string Description { get; set; } = string.Empty;
         public Inventory Inventory { get; set; }
+        public Xp Xp { get; set; } = new Xp();
 
         public Player(string name, PlayerType type)
         {

@@ -113,6 +113,8 @@
             {
                 Console.WriteLine($"✅ VICTOIRE ! Vous avez terrassé le {zomb.Name}.");
                 Console.WriteLine($"💚 Vie restante : {player.Health.ToString()} PV");
+                player.Xp.GainXp(zomb.XpGiven);
+                // Console.WriteLine($"🎁 Vous gagnez {zomb.XpGiven} !");
             }
             else
             {
