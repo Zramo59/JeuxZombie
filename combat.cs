@@ -8,9 +8,6 @@
         {
             Console.WriteLine($"--- DÉBUT DU COMBAT : {player.Name} VS {zomb.Name} ---");
 
-            // // Afficher l'inventaire de départ
-            // player.Inventory.DisplayInventory(player);
-
             // Déterminer qui commence (Initiative)
             bool playerTurn = _rng.Next(0, 2) == 0;
             Console.WriteLine(playerTurn ? "> Vous avez l'initiative !" : $"> Le {zomb.Name} vous surprend !");
@@ -21,7 +18,11 @@
                 {
                     // Tour du Joueur - Choix d'action
                     Console.WriteLine("\n--- VOTRE TOUR ---");
-                    HealthManager.DisplayHealthBar(player);
+                    Console.WriteLine("===================");
+                    Console.WriteLine("Enemy Life");
+                    HealthManager.DisplayHealthBarEnemy(zomb);
+                    Console.WriteLine("Your Life");
+                    HealthManager.DisplayHealthBarPlayer(player);
                     Console.WriteLine("1 - Attaquer");
                     Console.WriteLine("2 - Utiliser une potion");
                     Console.WriteLine("3 - Voir l'inventaire");
@@ -37,21 +38,29 @@
                             if (player.CurrentWeapon.Durability <= 0)
                             {
                                 Console.WriteLine("❌ Votre arme est brisée !");
-                                zomb.Health -= 2;
+                                int minDamage = 2;
+                                minDamage = zomb.ZombieCuirasseEffect(minDamage);
+                                zomb.Health -= minDamage;
                             }
                             // On ne vérifie les munitions QUE pour le Mage (ou si l'arme en a de base).
                             else if (player.Type == PlayerType.Mage && player.CurrentWeapon.Ammo <= 0)
                             {
                                 Console.WriteLine("⚠️ Plus de mana / munitions !");
-                                zomb.Health -= 5;
+                                int weakDamage = 5;
+                                weakDamage = zomb.ZombieCuirasseEffect(weakDamage);
+                                zomb.Health -= weakDamage;
                             }
                             else
                             {
                                 int dmgDealt = player.CurrentWeapon.Damage;
+                                dmgDealt = zomb.ZombieCuirasseEffect(dmgDealt);
                                 zomb.Health -= dmgDealt;
                                 player.CurrentWeapon.Use();
                                 Console.WriteLine($"[JOUEUR] Vous infligez {dmgDealt} dégâts.");
                             }
+                            
+                            // Vérifier si le Berserk doit entrer en rage
+                            zomb.ZombieBerserkEffect();
 
                             break;
 
@@ -100,6 +109,10 @@
                     int dmgTaken = zomb.Damage;
                     player.Health -= dmgTaken;
                     Console.WriteLine($"\n[ZOMBIE] Le {zomb.Name} frappe ! Vous perdez {dmgTaken} PV.");
+                    
+                    // Effet spécial du zombie radioactif
+                    zomb.ZombieRadioctifEffect(player);
+                    
                     // HealthManager.DisplayHealthBar(player);
                 }
 
@@ -114,7 +127,7 @@
                 Console.WriteLine($"✅ VICTOIRE ! Vous avez terrassé le {zomb.Name}.");
                 Console.WriteLine($"💚 Vie restante : {player.Health.ToString()} PV");
                 player.Xp.GainXp(zomb.XpGiven);
-                // Console.WriteLine($"🎁 Vous gagnez {zomb.XpGiven} !");
+                Console.WriteLine($"🎁 Vous gagnez {zomb.XpGiven} !");
             }
             else
             {

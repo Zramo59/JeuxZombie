@@ -2,9 +2,9 @@
 
 public class Xp
 {
-        public int Level { get; private set; } = 1;
-        public int CurrentXp { get; private set; }
-        public int XpToNextLevel { get; private set; }
+        public int Level { get; set; } = 1;
+        public int CurrentXp { get; set; }
+        public int XpToNextLevel { get; set; }
         
     
         public void GainXp(int amount)

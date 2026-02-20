@@ -31,6 +31,43 @@ namespace JeuxZombie
             Type = type;
             InitializeStats(type);
         }
+        
+        public void ZombieRadioctifEffect(Player player)
+        {
+            if (Type == ZombieType.Radioactif)
+            {
+                int radiationDamage = 5; // Dégâts de radiation par tour
+                player.Health -= radiationDamage;
+                Console.WriteLine($"☢️ Le {Name} inflige {radiationDamage} dégâts de radiation à {player.Name} !");
+            }
+        }
+
+        public void ZombieBerserkEffect()
+        {
+            if (Type == ZombieType.Berserk && Health < 40)
+            {
+                // Le Berserk devient enragé quand sa vie est basse
+                int bonusDamage = 10;
+                Damage += bonusDamage;
+                Console.WriteLine($"💢 Le {Name} entre en rage ! Ses dégâts augmentent de {bonusDamage} !");
+            }
+        }
+
+        public int ZombieCuirasseEffect(int incomingDamage)
+        {
+            if (Type == ZombieType.Cuirassé)
+            {
+                // Le Cuirassé réduit les dégâts reçus
+                int damageReduction = (int)(incomingDamage * 0.2); // Réduit de 20%
+                int finalDamage = incomingDamage - damageReduction;
+                if (damageReduction > 0)
+                {
+                    Console.WriteLine($"🛡️ L'armure du {Name} absorbe {damageReduction} dégâts !");
+                }
+                return finalDamage;
+            }
+            return incomingDamage;
+        }
 
         private void InitializeStats(ZombieType type)
         {

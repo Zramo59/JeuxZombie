@@ -39,7 +39,7 @@
 
         private static bool ApplyPotion(Player player, Potion potion)
         {
-            int maxHealth = GetMaxHealth(player.Type);
+            int maxHealth = GetMaxHealthPlayer(player.Type);
             
             // Vérifier si la vie est déjà au maximum
             if (player.Health >= maxHealth)
@@ -61,7 +61,7 @@
                 
         }
 
-        public static int GetMaxHealth(PlayerType type)
+        public static int GetMaxHealthPlayer(PlayerType type)
         {
             return type switch
             {
@@ -71,10 +71,22 @@
                 _ => 100
             };
         }
-
-        public static void DisplayHealthBar(Player player)
+        
+        public static int GetMaxHealthEnemy(ZombieType type)
         {
-            int maxHealth = GetMaxHealth(player.Type);
+            return type switch
+            {
+                ZombieType.Radioactif => 120,
+                ZombieType.Berserk => 80,
+                ZombieType.Cuirassé => 200,
+                ZombieType.Normal => 100,
+                _ => 50
+            };
+        }
+
+        public static void DisplayHealthBarPlayer(Player player)
+        {
+            int maxHealth = GetMaxHealthPlayer(player.Type);
             double healthPercent = (double)player.Health / maxHealth;
             int barLength = 20;
             int filledBars = (int)(healthPercent * barLength);
@@ -91,6 +103,26 @@
 
             Console.ForegroundColor = color;
             Console.Write($"{bar} {player.Health}/{maxHealth} PV");
+            Console.ResetColor();
+            Console.WriteLine();
+        }
+
+        public static void DisplayHealthBarEnemy(Zombie zombie)
+        {
+            int maxHealth = zombie.Health;
+            double healthPercent = (double)zombie.Health / maxHealth;
+            int barLength = 20;
+            int filledBars = (int)(healthPercent * barLength);
+            
+            string bar = "[" + new string('█', filledBars) + new string('░', barLength - filledBars) + "]";
+            ConsoleColor color;
+            if (healthPercent > 0.6)                color = ConsoleColor.Green;
+            else if (healthPercent > 0.3)
+                color = ConsoleColor.Yellow;
+            else                color = ConsoleColor.Red;
+            
+            Console.ForegroundColor = color;
+            Console.Write($"{bar} {zombie.Health}/{maxHealth} PV");
             Console.ResetColor();
             Console.WriteLine();
         }

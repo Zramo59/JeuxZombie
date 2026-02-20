@@ -58,28 +58,62 @@
 
         public void DisplayInventory(Player player)
         {
-            Console.WriteLine($"\n=== INVENTAIRE ({_potions.Count}/{_maxCapacity}) ===");
-
-            var grouped = _potions.GroupBy(p => p.Type).OrderBy(g => g.Key);
-
-            int index = 1;
-            foreach (var group in grouped)
+            bool inInventory = true;
+            while (inInventory)
             {
-                Console.WriteLine($"  {index}. {group.First().Name} (+{group.First().HealAmount} PV) x{group.Count()}");
-                index++;
-            }
+                Console.Clear();
+                Console.WriteLine($"\n=== INVENTAIRE ({_potions.Count}/{_maxCapacity}) ===");
 
-            HealthManager.DisplayHealthBar(player);
-            player.Xp.DisplayXp();
-            // ConsoleKeyInfo actionKey = Console.ReadKey(true);
-            // switch (actionKey.KeyChar)           {
-            //     case "1":
-            //         HealthManager.UsePotion(player);
-            //         continue;
-            //     case '2':
-            //         Console.WriteLine("Retour au menu...");
-            //         break;
-            // }
+                var grouped = _potions.GroupBy(p => p.Type).OrderBy(g => g.Key);
+
+                int index = 1;
+                var potionList = new List<Potion>();
+                foreach (var group in grouped)
+                {
+                    Console.WriteLine($"  {index}. {group.First().Name} (+{group.First().HealAmount} PV) x{group.Count()}");
+                    potionList.Add(group.First());
+                    index++;
+                }
+
+                Console.WriteLine($"  {index}. Retour au menu");
+                Console.WriteLine();
+                HealthManager.DisplayHealthBarPlayer(player);
+                player.Xp.DisplayXp();
+                
+                Console.WriteLine("\nQuelle action voulez-vous effectuer ? (1-" + (index) + "):");
+                ConsoleKeyInfo actionKey = Console.ReadKey(true);
+
+                if (char.IsDigit(actionKey.KeyChar))
+                {
+                    int choice = int.Parse(actionKey.KeyChar.ToString());
+                    
+                    if (choice >= 1 && choice < index)
+                    {
+                        Potion selectedPotion = potionList[choice - 1];
+                        if (HealthManager.UsePotion(player, selectedPotion.Type))
+                        {
+                            RemovePotion(selectedPotion);
+                        }
+                        Console.WriteLine("\nAppuyez sur une touche pour continuer...");
+                        Console.ReadKey(true);
+                    }
+                    else if (choice == index)
+                    {
+                        Console.WriteLine("Retour au menu...");
+                        inInventory = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Choix invalide !");
+                        Console.ReadKey(true);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Entrée invalide !");
+                    Console.ReadKey(true);
+                }
+            }
         }
         
         public bool RemovePotion(Potion potion)
@@ -110,6 +144,16 @@
         public Potion? GetAnyPotion()
         {
             return _potions.FirstOrDefault();
+        }
+
+        public List<PotionType> GetAllPotionTypes()
+        {
+            return _potions.Select(p => p.Type).ToList();
+        }
+
+        public void ClearInventory()
+        {
+            _potions.Clear();
         }
     }
 }
