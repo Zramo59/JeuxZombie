@@ -1,4 +1,4 @@
-﻿namespace JeuxZombie
+﻿﻿namespace JeuxZombie
 {
     public class HealthManager
     {
@@ -7,7 +7,7 @@
         {
             if (player.Inventory.IsEmpty)
             {
-                Console.WriteLine("❌ Aucune potion disponible dans l'inventaire !");
+                UIHelper.DisplayError("Aucune potion disponible dans l'inventaire !");
                 return false;
             }
 
@@ -18,7 +18,7 @@
                 potion = player.Inventory.GetPotion(potionType.Value);
                 if (potion == null)
                 {
-                    Console.WriteLine($"❌ Aucune potion de type {potionType.Value} disponible !");
+                    UIHelper.DisplayError($"Aucune potion de type {potionType.Value} disponible !");
                     return false;
                 }
             }
@@ -28,7 +28,7 @@
                 potion = player.Inventory.GetAnyPotion();
                 if (potion == null)
                 {
-                    Console.WriteLine("❌ Aucune potion trouvée !");
+                    UIHelper.DisplayError("Aucune potion trouvée !");
                     return false;
                 }
                 player.Inventory.RemovePotion(potion); // en création d'une fonction pour retirer une potion spécifique
@@ -39,12 +39,12 @@
 
         private static bool ApplyPotion(Player player, Potion potion)
         {
-            int maxHealth = GetMaxHealthPlayer(player.Type);
+            int maxHealth = player.GetMaxHealth();
             
             // Vérifier si la vie est déjà au maximum
             if (player.Health >= maxHealth)
             {
-                Console.WriteLine("💚 Votre vie est déjà au maximum !");
+                UIHelper.DisplayWarning("Votre vie est déjà au maximum !");
                 return false;
             }
             else
@@ -54,11 +54,9 @@
                 player.Health = Math.Min(player.Health + potion.HealAmount, maxHealth);
                 int actualHeal = player.Health - healthBefore;
 
-                Console.WriteLine($"💚 {potion.Name} utilisée ! +{actualHeal} PV (Vie: {player.Health.ToString()}/{maxHealth.ToString()})");
+                UIHelper.DisplaySuccess($"{potion.Name} utilisée ! +{actualHeal} PV (Vie: {player.Health}/{maxHealth})");
                 return true;
             }
-
-                
         }
 
         public static int GetMaxHealthPlayer(PlayerType type)
@@ -86,45 +84,28 @@
 
         public static void DisplayHealthBarPlayer(Player player)
         {
-            int maxHealth = GetMaxHealthPlayer(player.Type);
-            double healthPercent = (double)player.Health / maxHealth;
-            int barLength = 20;
-            int filledBars = (int)(healthPercent * barLength);
-
-            string bar = "[" + new string('█', filledBars) + new string('░', barLength - filledBars) + "]";
-            
-            ConsoleColor color;
-            if (healthPercent > 0.6)
-                color = ConsoleColor.Green;
-            else if (healthPercent > 0.3)
-                color = ConsoleColor.Yellow;
-            else
-                color = ConsoleColor.Red;
-
-            Console.ForegroundColor = color;
-            Console.Write($"{bar} {player.Health}/{maxHealth} PV");
-            Console.ResetColor();
-            Console.WriteLine();
+            int maxHealth = player.GetMaxHealth();
+            int currentHealth = Math.Max(0, player.Health); // Assurer que la santé n'est pas négative
+            ConsoleColor barColor = GetHealthColor((int)((double)currentHealth / maxHealth * 100));
+            UIHelper.DisplayColoredBar("Vie", currentHealth, maxHealth, barColor);
         }
 
         public static void DisplayHealthBarEnemy(Zombie zombie)
         {
-            int maxHealth = zombie.Health;
-            double healthPercent = (double)zombie.Health / maxHealth;
-            int barLength = 20;
-            int filledBars = (int)(healthPercent * barLength);
-            
-            string bar = "[" + new string('█', filledBars) + new string('░', barLength - filledBars) + "]";
-            ConsoleColor color;
-            if (healthPercent > 0.6)                color = ConsoleColor.Green;
-            else if (healthPercent > 0.3)
-                color = ConsoleColor.Yellow;
-            else                color = ConsoleColor.Red;
-            
-            Console.ForegroundColor = color;
-            Console.Write($"{bar} {zombie.Health}/{maxHealth} PV");
-            Console.ResetColor();
-            Console.WriteLine();
+            int maxHealth = GetMaxHealthEnemy(zombie.Type);
+            int currentHealth = Math.Max(0, zombie.Health); // Assurer que la santé n'est pas négative
+            ConsoleColor barColor = GetHealthColor((int)((double)currentHealth / maxHealth * 100));
+            UIHelper.DisplayColoredBar("Ennemi", currentHealth, maxHealth, barColor);
+        }
+
+        private static ConsoleColor GetHealthColor(int percentage)
+        {
+            if (percentage > 50)
+                return ConsoleColor.Green;
+            else if (percentage > 25)
+                return ConsoleColor.Yellow;
+            else
+                return ConsoleColor.Red;
         }
     }
 }

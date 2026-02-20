@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 namespace JeuxZombie
 {
     public enum ZombieType
@@ -21,6 +21,7 @@ namespace JeuxZombie
 
         public Zombie()
         {
+            Name = string.Empty; // Initialisation par défaut
             // Génère un type de zombie aléatoire
             Type = (ZombieType)_rng.Next(0, Enum.GetValues(typeof(ZombieType)).Length + 1);
             InitializeStats(Type);
@@ -28,6 +29,7 @@ namespace JeuxZombie
 
         public Zombie(ZombieType type)
         {
+            Name = string.Empty; // Initialisation par défaut
             Type = type;
             InitializeStats(type);
         }
@@ -38,7 +40,9 @@ namespace JeuxZombie
             {
                 int radiationDamage = 5; // Dégâts de radiation par tour
                 player.Health -= radiationDamage;
-                Console.WriteLine($"☢️ Le {Name} inflige {radiationDamage} dégâts de radiation à {player.Name} !");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine($"  [RAD] Le {Name} inflige {radiationDamage} degats de radiation a {player.Name} !");
+                Console.ResetColor();
             }
         }
 
@@ -49,7 +53,9 @@ namespace JeuxZombie
                 // Le Berserk devient enragé quand sa vie est basse
                 int bonusDamage = 10;
                 Damage += bonusDamage;
-                Console.WriteLine($"💢 Le {Name} entre en rage ! Ses dégâts augmentent de {bonusDamage} !");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"  [RAGE] Le {Name} entre en rage ! Ses degats augmentent de {bonusDamage} !");
+                Console.ResetColor();
             }
         }
 
@@ -62,7 +68,9 @@ namespace JeuxZombie
                 int finalDamage = incomingDamage - damageReduction;
                 if (damageReduction > 0)
                 {
-                    Console.WriteLine($"🛡️ L'armure du {Name} absorbe {damageReduction} dégâts !");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"  [ARMOR] L'armure du {Name} absorbe {damageReduction} degats !");
+                    Console.ResetColor();
                 }
                 return finalDamage;
             }

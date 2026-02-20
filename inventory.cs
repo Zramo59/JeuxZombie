@@ -1,4 +1,4 @@
-﻿namespace JeuxZombie
+﻿﻿namespace JeuxZombie
 {
     public enum PotionType
     {
@@ -15,6 +15,7 @@
 
         public void InitialisePotion(PotionType type)
         {
+            Type = type;
             switch (type)
             {
                 case PotionType.Small:
@@ -62,25 +63,55 @@
             while (inInventory)
             {
                 Console.Clear();
-                Console.WriteLine($"\n=== INVENTAIRE ({_potions.Count}/{_maxCapacity}) ===");
+                UIHelper.DisplayTitle($"🎒 INVENTAIRE ({_potions.Count}/{_maxCapacity})");
 
                 var grouped = _potions.GroupBy(p => p.Type).OrderBy(g => g.Key);
 
                 int index = 1;
                 var potionList = new List<Potion>();
-                foreach (var group in grouped)
+                
+                if (grouped.Any())
                 {
-                    Console.WriteLine($"  {index}. {group.First().Name} (+{group.First().HealAmount} PV) x{group.Count()}");
-                    potionList.Add(group.First());
-                    index++;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("  ═══════════════════════════════════════\n");
+                    Console.ResetColor();
+                    
+                    foreach (var group in grouped)
+                    {
+                        UIHelper.DisplayMenuItem(index, $"{group.First().Name} (+{group.First().HealAmount} PV) x{group.Count()}");
+                        potionList.Add(group.First());
+                        index++;
+                    }
+                    
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("\n  ═══════════════════════════════════════");
+                    Console.ResetColor();
                 }
-
-                Console.WriteLine($"  {index}. Retour au menu");
+                else
+                {
+                    UIHelper.DisplayWarning("Votre inventaire est vide !");
+                    Console.WriteLine();
+                    index = 1;
+                }
+                
+                UIHelper.DisplayMenuItem(index, "Retour au menu");
                 Console.WriteLine();
+                
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("  ══════════════════════════════════════");
+                Console.ResetColor();
                 HealthManager.DisplayHealthBarPlayer(player);
                 player.Xp.DisplayXp();
                 
-                Console.WriteLine("\nQuelle action voulez-vous effectuer ? (1-" + (index) + "):");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"  💰 Or disponible : {player.Gold} pièces");
+                Console.ResetColor();
+                
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("  ══════════════════════════════════════\n");
+                Console.ResetColor();
+                
+                UIHelper.DisplayPrompt("Quelle action voulez-vous effectuer ?");
                 ConsoleKeyInfo actionKey = Console.ReadKey(true);
 
                 if (char.IsDigit(actionKey.KeyChar))
@@ -94,24 +125,23 @@
                         {
                             RemovePotion(selectedPotion);
                         }
-                        Console.WriteLine("\nAppuyez sur une touche pour continuer...");
-                        Console.ReadKey(true);
+                        UIHelper.PressAnyKey();
                     }
                     else if (choice == index)
                     {
-                        Console.WriteLine("Retour au menu...");
+                        UIHelper.DisplayMessage("Retour au menu...", "👈");
                         inInventory = false;
                     }
                     else
                     {
-                        Console.WriteLine("Choix invalide !");
-                        Console.ReadKey(true);
+                        UIHelper.DisplayError("Choix invalide !");
+                        UIHelper.PressAnyKey();
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Entrée invalide !");
-                    Console.ReadKey(true);
+                    UIHelper.DisplayError("Entrée invalide !");
+                    UIHelper.PressAnyKey();
                 }
             }
         }
@@ -154,6 +184,16 @@
         public void ClearInventory()
         {
             _potions.Clear();
+        }
+
+        public void IncreaseCapacity()
+        {
+            _maxCapacity++;
+        }
+
+        public int GetMaxCapacity()
+        {
+            return _maxCapacity;
         }
     }
 }

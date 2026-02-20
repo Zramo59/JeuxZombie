@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿﻿using System.Text.Json;
 
 namespace JeuxZombie
 {
@@ -7,6 +7,7 @@ namespace JeuxZombie
         public string PlayerName { get; set; } = string.Empty;
         public PlayerType PlayerType { get; set; }
         public int PlayerHealth { get; set; }
+        public int PlayerGold { get; set; }
         public int PlayerLevel { get; set; }
         public int PlayerCurrentXp { get; set; }
         public int PlayerXpToNextLevel { get; set; }
@@ -47,6 +48,7 @@ namespace JeuxZombie
                     PlayerName = player.Name,
                     PlayerType = player.Type,
                     PlayerHealth = player.Health,
+                    PlayerGold = player.Gold,
                     PlayerLevel = player.Xp.Level,
                     PlayerCurrentXp = player.Xp.CurrentXp,
                     PlayerXpToNextLevel = player.Xp.XpToNextLevel,
@@ -64,12 +66,13 @@ namespace JeuxZombie
                 string jsonString = JsonSerializer.Serialize(saveData, options);
                 File.WriteAllText(SaveFilePath, jsonString);
 
-                Console.WriteLine($"✓ Partie sauvegardée avec succès dans : {SaveFilePath}");
+                UIHelper.DisplaySuccess($"Partie sauvegardée avec succès !");
+                UIHelper.DisplayInfo($"Localisation : {SaveFilePath}");
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Erreur lors de la sauvegarde : {ex.Message}");
+                UIHelper.DisplayError($"Erreur lors de la sauvegarde : {ex.Message}");
                 return false;
             }
         }
@@ -80,7 +83,7 @@ namespace JeuxZombie
             {
                 if (!File.Exists(SaveFilePath))
                 {
-                    Console.WriteLine("❌ Aucune sauvegarde trouvée.");
+                    UIHelper.DisplayError("Aucune sauvegarde trouvée.");
                     return null;
                 }
 
@@ -89,7 +92,7 @@ namespace JeuxZombie
 
                 if (saveData == null)
                 {
-                    Console.WriteLine("❌ Impossible de charger la sauvegarde.");
+                    UIHelper.DisplayError("Impossible de charger la sauvegarde.");
                     return null;
                 }
 
@@ -98,6 +101,7 @@ namespace JeuxZombie
                 
                 // Restaurer les stats
                 player.Health = saveData.PlayerHealth;
+                player.Gold = saveData.PlayerGold;
                 
                 // Restaurer l'XP et le niveau
                 player.Xp.Level = saveData.PlayerLevel;
@@ -119,14 +123,16 @@ namespace JeuxZombie
                     player.Inventory.AddPotion(potion);
                 }
 
-                Console.WriteLine($"✓ Partie chargée avec succès !");
-                Console.WriteLine($"  Date de sauvegarde : {saveData.SaveDate}");
-                Console.WriteLine($"  Joueur : {player.Name} (Niveau {player.Xp.Level})");
+                UIHelper.DisplaySuccess("Partie chargée avec succès !");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"  📅 Date de sauvegarde : {saveData.SaveDate:dd/MM/yyyy HH:mm:ss}");
+                Console.WriteLine($"  🧑 Joueur : {player.Name} (Niveau {player.Xp.Level})");
+                Console.ResetColor();
                 return player;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Erreur lors du chargement : {ex.Message}");
+                UIHelper.DisplayError($"Erreur lors du chargement : {ex.Message}");
                 return null;
             }
         }
@@ -143,12 +149,12 @@ namespace JeuxZombie
                 if (File.Exists(SaveFilePath))
                 {
                     File.Delete(SaveFilePath);
-                    Console.WriteLine("✓ Sauvegarde supprimée.");
+                    UIHelper.DisplaySuccess("Sauvegarde supprimée.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Erreur lors de la suppression : {ex.Message}");
+                UIHelper.DisplayError($"Erreur lors de la suppression : {ex.Message}");
             }
         }
     }

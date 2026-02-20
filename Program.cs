@@ -4,97 +4,149 @@
     {
         private static void Main()
         {
-            Console.WriteLine("Welcome to my terminal game !");
+            UIHelper.DisplayBanner("ZOMBIE APOCALYPSE");
             
             Player hero;
             
             // Vérifier s'il existe une sauvegarde
             if (SaveManager.HasSaveFile())
             {
-                Console.WriteLine("\n=== SAUVEGARDE DÉTECTÉE ===");
-                Console.WriteLine("1 - Charger la partie sauvegardée");
-                Console.WriteLine("2 - Nouvelle partie");
-                Console.WriteLine("Appuyez sur 1 ou 2 :");
+                UIHelper.DisplayTitle("SAUVEGARDE DÉTECTÉE");
+                string[] loadOptions = { "Charger la partie sauvegardée", "Nouvelle partie" };
+                UIHelper.DisplayMenu("Menu Principal", loadOptions);
                 
-                ConsoleKeyInfo loadChoice = Console.ReadKey(true);
+                int choice = Console.ReadKey(true).KeyChar - '1';
                 
-                if (loadChoice.KeyChar == '1')
+                if (choice == 0)
                 {
                     Player? loadedPlayer = SaveManager.LoadGame();
                     if (loadedPlayer != null)
                     {
                         hero = loadedPlayer;
-                        Console.WriteLine("\n✓ Partie chargée avec succès !");
-                        Console.WriteLine($"Bienvenue de retour, {hero.Name} !");
+                        UIHelper.DisplaySuccess("Partie chargée avec succès !");
+                        UIHelper.DisplayMessage($"Bienvenue de retour, {hero.Name} !", "👋");
+                        UIHelper.PressAnyKey();
                     }
                     else
                     {
-                        Console.WriteLine("Erreur lors du chargement. Création d'une nouvelle partie...");
+                        UIHelper.DisplayError("Erreur lors du chargement. Création d'une nouvelle partie...");
                         hero = CreateNewPlayer();
                     }
                 }
                 else
                 {
-                    Console.WriteLine("\nCréation d'une nouvelle partie...");
+                    DisplayIntroduction();
                     hero = CreateNewPlayer();
                 }
             }
             else
             {
+                DisplayIntroduction();
                 hero = CreateNewPlayer();
             }
 
-            Console.WriteLine($"\n✓ Classe : {hero.Type}");
-            Console.WriteLine($"  {hero.Description}");
+            UIHelper.DisplayTitle("BIENVENUE, " + hero.Name.ToUpper());
+            UIHelper.DisplayPlayerStats(hero);
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"\n  {hero.Description}");
+            Console.ResetColor();
+            UIHelper.PressAnyKey();
 
             bool boucle = true;
             CombatEngine engine = new CombatEngine();
             while (boucle)
             {
-                Console.WriteLine("\n=== MENU ===");
-                Console.WriteLine("1 - Start Fight");
-                Console.WriteLine("2 - Inventory");
-                Console.WriteLine("3 - Save Game");
-                Console.WriteLine("4 - Left Game");
-                Console.WriteLine("Push keychar (1-4):");
+                Console.Clear();
+                UIHelper.DisplayTitle("MENU PRINCIPAL");
+                
+                // Afficher le gold du joueur
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"  [*] Or disponible : {hero.Gold} pieces\n");
+                Console.ResetColor();
+                
+                string[] menuOptions = { "[1] Commencer un combat", "[2] Inventaire", "[3] Armes", "[4] Sauvegarder", "[5] Quitter le jeu" };
+                UIHelper.DisplayMenu("Options Disponibles", menuOptions);
 
                 ConsoleKeyInfo startKey = Console.ReadKey(true);
 
                 switch (startKey.KeyChar)
                 {
                     case '1':
-                        Console.WriteLine("commencer le combat...");
+                        Console.Clear();
+                        UIHelper.DisplayMessage("Engagement dans le combat...", "[>]");
+                        Thread.Sleep(500);
                         Zombie enemy = new Zombie();
-                        Console.WriteLine($"\n✓ Ennemi : {enemy.Name}\n");
+                        UIHelper.DisplayEnemyInfo(enemy);
                         engine.StartFight(hero, enemy);
+                        UIHelper.PressAnyKey();
                         break;
                     case '2':
-                        Console.WriteLine("Accèder à l'inventaire...");
                         hero.Inventory.DisplayInventory(hero);
                         break;
                     case '3':
-                        Console.WriteLine("Sauvegarder la partie...");
-                        SaveManager.SaveGame(hero);
-                        Console.WriteLine("\nAppuyez sur une touche pour continuer...");
-                        Console.ReadKey(true);
+                        hero.DisplayWeaponsMenu();
                         break;
                     case '4':
-                        Console.WriteLine("Quitter le jeu...");
+                        Console.Clear();
+                        UIHelper.DisplayMessage("Sauvegarde en cours...", "[S]");
+                        SaveManager.SaveGame(hero);
+                        UIHelper.DisplaySuccess("Partie sauvegardee avec succes !");
+                        UIHelper.PressAnyKey();
+                        break;
+                    case '5':
+                        Console.Clear();
+                        UIHelper.DisplayBanner("A BIENTOT, HEROS !");
                         boucle = false;
                         break;
                 }
             }
         }
 
+        private static void DisplayIntroduction()
+        {
+            Console.Clear();
+            UIHelper.DisplayBanner("L'HISTOIRE COMMENCE...");
+            string intro = "On est au V siècle après Jésus Christ dans une contrée, un temps donné pour " +
+                          "l'avancement de la science et d'invention en tout genre. Mais cette science rattrapa " +
+                          "vite l'époque lors d'une découverte surprenante d'un objet quelque peu étrange... " +
+                          "Les scientifiques de l'époque firent différents tests sur cet objet et n'y trouvèrent rien, " +
+                          "mais après deux ans d'expérimentation, un gaz étrange sortit de l'orbe et se propagea dans ce village, " +
+                          "changeant certains villageois en monstres assoiffés de chair humaine. Suite à cela, beaucoup de " +
+                          "personnes tentèrent de survivre mais sans résultat... Alors cette \"Maladie\" se propagea et fit " +
+                          "énormément de morts, mais un personnage du nom de...";
+            
+            UIHelper.DisplayTypingEffect(intro, 20);
+            
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n  Penses-tu réussir à survivre dans ce monde sombre et terrifiant ?");
+            Console.ResetColor();
+            UIHelper.PressAnyKey();
+        }
+
         private static Player CreateNewPlayer()
         {
-            Console.WriteLine("At first, you have to choose your name character :");
-            string playerName = Console.ReadLine() ?? "Player";
-            Console.WriteLine($"Good {playerName}, you have many class in my world, you can choose between :");
-            Console.WriteLine("1 - Tank (200 HP, War Axe)");
-            Console.WriteLine("2 - Knight (120 HP, Long Sword)");
-            Console.WriteLine("3 - Mage (75 HP, Magic Staff)");
-            Console.WriteLine("Just press a key (1-3) to choose your class :");
+            UIHelper.DisplayTitle("CREATION DU PERSONNAGE");
+            UIHelper.DisplayMessage("Choisissez un nom pour votre heros", "[+]");
+            UIHelper.DisplayPrompt("Nom du personnage:");
+            string playerName = Console.ReadLine() ?? "Heros";
+            
+            Console.Clear();
+            UIHelper.DisplayTitle("SELECTION DE LA CLASSE");
+            UIHelper.DisplayMessage($"Excellent choix, {playerName}!", "[*]");
+            
+            string[] classes = { 
+                "[1] TANK (200 HP, Hache de guerre) - Defenseur robuste",
+                "[2] KNIGHT (120 HP, Epee longue) - Combattant equilibre",
+                "[3] MAGE (75 HP, Baton magique) - Utilisateur de magie"
+            };
+            
+            Console.WriteLine();
+            for (int i = 0; i < classes.Length; i++)
+            {
+                UIHelper.DisplayMenuItem(i + 1, classes[i].Split('-')[0].Trim());
+            }
+            
+            UIHelper.DisplayPrompt("Choisissez votre classe:");
             ConsoleKeyInfo playerKey = Console.ReadKey(true);
             
             Player hero;
@@ -110,8 +162,9 @@
                     hero = new Player(playerName, PlayerType.Mage);
                     break;
                 default:
-                    Console.WriteLine("Invalid key, Knight class by default...");
+                    UIHelper.DisplayWarning("Choix invalide, classe Knight sélectionnée par défaut...");
                     hero = new Player(playerName, PlayerType.Knight);
+                    Thread.Sleep(1000);
                     break;
             }
             
